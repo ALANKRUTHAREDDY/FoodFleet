@@ -188,9 +188,10 @@ $total+=$subtotal;
 if($firstFood!=""){
 
 $recQuery=mysqli_query($conn,"
-SELECT recommended_item,confidence 
+SELECT recommended_item, MAX(confidence) as confidence
 FROM recommendations 
 WHERE food_item='$firstFood'
+GROUP BY recommended_item
 ORDER BY confidence DESC
 LIMIT 3");
 
@@ -217,11 +218,14 @@ $data=$menuMap[$recommended];
 ₹<?php echo $data['price']; ?>
 
 <form method="POST" action="add_to_cart.php">
-<input type="hidden" name="food_name" value="<?php echo $recommended; ?>">
-<input type="hidden" name="price" value="<?php echo $data['price']; ?>">
-<input type="hidden" name="image" value="<?php echo $data['image']; ?>">
+
+<input type="hidden" name="food_name" value="<?php echo htmlspecialchars($recommended); ?>">
+<input type="hidden" name="price" value="<?php echo $data['price'] ?? 0; ?>">
+<input type="hidden" name="image" value="<?php echo $data['image'] ?? ''; ?>">
 <input type="hidden" name="quantity" value="1">
+
 <button type="submit">Add to Cart</button>
+
 </form>
 </div>
 
